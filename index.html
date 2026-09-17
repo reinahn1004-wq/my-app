@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Body Log">
+<title>Body Log</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    sans-serif;
+  background: #faf8f6;
+  color: #444;
+}
+
+header {
+  padding: 28px 20px 18px;
+  text-align: center;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+header p {
+  margin: 7px 0 0;
+  color: #999;
+  font-size: 13px;
+}
+
+.container {
+  width: min(700px, 92%);
+  margin: 20px auto 50px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.date {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #fff;
+  margin-bottom: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #777;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 11px;
+  font-size: 16px;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #bda9a0;
+}
+
+.unit {
+  font-size: 12px;
+  color: #aaa;
+  margin-left: 3px;
+}
+
+.save-button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #75635c;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.save-button:active {
+  transform: scale(0.98);
+}
+
+.message {
+  text-align: center;
+  font-size: 13px;
+  color: #8b7b72;
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+/* 2D BODY */
+
+.body-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 430px;
+  overflow: hidden;
+}
+
+.body-svg {
+  width: 300px;
+  height: 420px;
+}
+
+.body-fill {
+  fill: #ead8ce;
+  stroke: #765f56;
+  stroke-width: 2;
+}
+
+.body-line {
+  fill: none;
+  stroke: #765f56;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.body-info {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+  margin-top: -5px;
+}
+
+/* GRAPH */
+
+.graph-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+canvas {
+  width: 100%;
+  height: 280px;
+  display: block;
+}
+
+.select-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.select-row button {
+  flex-shrink: 0;
+  padding: 8px 13px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: white;
+  color: #777;
+}
+
+.select-row button.active {
+  background: #75635c;
+  color: white;
+  border-color: #75635c;
+}
+
+/* HISTORY */
+
+.history-item {
+  border-bottom: 1px solid #eee;
+  padding: 14px 0;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-date {
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+.history-values {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.8;
+}
+
+.delete-button {
+  margin-top: 8px;
+  border: none;
+  background: #f3eeee;
+  color: #977;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.empty {
+  text-align: center;
+  color: #aaa;
+  padding: 20px;
+  font-size: 14px;
+}
+
+@media (max-width: 500px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .body-svg {
+    width: 270px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Body Log</h1>
+  <p>からだの変化を、やさしく記録</p>
+</header>
+
+<div class="container">
+
+  <!-- INPUT -->
+  <section class="card">
+    <h2>今日のサイズ</h2>
+
+    <input
+      type="date"
+      id="date"
+      class="date"
+    >
+
+    <div class="grid">
+
+      <div class="input-group">
+        <label>身長 <span class="unit">cm</span></label>
+        <input id="height" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>体重 <span class="unit">kg</span></label>
+        <input id="weight" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>バスト <span class="unit">cm</span></label>
+        <input id="bust" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>ウエスト <span class="unit">cm</span></label>
+        <input id="waist" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>ヒップ <span class="unit">cm</span></label>
+        <input id="hip" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>太もも <span class="unit">cm</span></label>
+        <input id="thigh" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>ふくらはぎ <span class="unit">cm</span></label>
+        <input id="calf" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>足首 <span class="unit">cm</span></label>
+        <input id="ankle" type="number" step="0.1">
+      </div>
+
+      <div class="input-group">
+        <label>二の腕 <span class="unit">cm</span></label>
+        <input id="arm" type="number" step="0.1">
+      </div>
+
+    </div>
+
+    <button class="save-button" onclick="saveData()">
+      記録する
+    </button>
+
+    <div id="message" class="message"></div>
+  </section>
+
+
+  <!-- BODY -->
+  <section class="card">
+    <h2>現在の体型</h2>
+
+    <div class="body-area">
+
+      <svg
+        class="body-svg"
+        viewBox="0 0 300 420"
+        id="bodySvg"
+      >
+
+        <!-- head -->
+        <ellipse
+          id="head"
+          class="body-fill"
+          cx="150"
+          cy="45"
+          rx="27"
+          ry="32"
+        />
+
+        <!-- neck -->
+        <path
+          id="neck"
+          class="body-fill"
+          d="M138 70 L162 70 L165 90 L135 90 Z"
+        />
+
+        <!-- torso -->
+        <path
+          id="torso"
+          class="body-fill"
+          d="
+          M135 85
+          C120 88 108 100 105 125
+          L112 190
+          C118 205 125 210 130 212
+          L130 275
+          L170 275
+          L170 212
+          C175 210 182 205 188 190
+          L195 125
+          C192 100 180 88 165 85
+          Z
+          "
+        />
+
+        <!-- left arm -->
+        <path
+          id="leftArm"
+          class="body-fill"
+          d="
+          M108 105
+          C95 108 90 125 87 150
+          L78 220
+          C77 230 84 236 91 231
+          L103 160
+          L116 125
+          Z
+          "
+        />
+
+        <!-- right arm -->
+        <path
+          id="rightArm"
+          class="body-fill"
+          d="
+          M192 105
+          C205 108 210 125 213 150
+          L222 220
+          C223 230 216 236 209 231
+          L197 160
+          L184 125
+          Z
+          "
+        />
+
+        <!-- left leg -->
+        <path
+          id="leftLeg"
+          class="body-fill"
+          d="
+          M130 265
+          L149 265
+          L147 330
+          L140 405
+          L118 405
+          L126 330
+          Z
+          "
+        />
+
+        <!-- right leg -->
+        <path
+          id="rightLeg"
+          class="body-fill"
+          d="
+          M151 265
+          L170 265
+          L174 330
+          L182 405
+          L160 405
+          L153 330
+          Z
+          "
+        />
+
+      </svg>
+
+    </div>
+
+    <div class="body-info">
+      入力したサイズに合わせてイメージが変化します
+    </div>
+  </section>
+
+
+  <!-- GRAPH -->
+  <section class="card">
+    <h2>サイズの変化</h2>
+
+    <div class="select-row">
+
+      <button class="active" onclick="changeGraph('weight', this)">
+        体重
+      </button>
+
+      <button onclick="changeGraph('bust', this)">
+        バスト
+      </button>
+
+      <button onclick="changeGraph('waist', this)">
+        ウエスト
+      </button>
+
+      <button onclick="changeGraph('hip', this)">
+        ヒップ
+      </button>
+
+      <button onclick="changeGraph('thigh', this)">
+        太もも
+      </button>
+
+      <button onclick="changeGraph('calf', this)">
+        ふくらはぎ
+      </button>
+
+      <button onclick="changeGraph('ankle', this)">
+        足首
+      </button>
+
+      <button onclick="changeGraph('arm', this)">
+        二の腕
+      </button>
+
+    </div>
+
+    <div class="graph-wrap">
+      <canvas id="graph"></canvas>
+    </div>
+
+  </section>
+
+
+  <!-- HISTORY -->
+  <section class="card">
+    <h2>記録</h2>
+    <div id="history"></div>
+  </section>
+
+</div>
+
+
+<script>
+
+const fields = [
+  "height",
+  "weight",
+  "bust",
+  "waist",
+  "hip",
+  "thigh",
+  "calf",
+  "ankle",
+  "arm"
+];
+
+let graphTarget = "weight";
+
+let records =
+  JSON.parse(localStorage.getItem("bodyRecords") || "[]");
+
+
+// 今日の日付
+const today = new Date();
+
+document.getElementById("date").value =
+  today.toISOString().split("T")[0];
+
+
+// 保存
+function saveData() {
+
+  const date =
+    document.getElementById("date").value;
+
+  if (!date) {
+    showMessage("日付を入力してください");
+    return;
+  }
+
+  const record = {
+    date: date
+  };
+
+  fields.forEach(field => {
+
+    const value =
+      parseFloat(document.getElementById(field).value);
+
+    record[field] =
+      Number.isFinite(value) ? value : null;
+
+  });
+
+  if (
+    Object.values(record).every(
+      (v, i) => i === 0 || v === null
+    )
+  ) {
+    showMessage("サイズを1つ以上入力してください");
+    return;
+  }
+
+  // 同じ日付なら上書き
+  records =
+    records.filter(item => item.date !== date);
+
+  records.push(record);
+
+  records.sort(
+    (a,b) => a.date.localeCompare(b.date)
+  );
+
+  localStorage.setItem(
+    "bodyRecords",
+    JSON.stringify(records)
+  );
+
+  showMessage("記録しました ✓");
+
+  renderHistory();
+  drawGraph();
+  updateBody();
+}
+
+
+// メッセージ
+function showMessage(text) {
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+
+  setTimeout(() => {
+    message.textContent = "";
+  }, 2200);
+}
+
+
+// 最新データ
+function latestRecord() {
+
+  if (records.length === 0)
+    return null;
+
+  return records[records.length - 1];
+}
+
+
+// 2D体型
+function updateBody() {
+
+  const r = latestRecord();
+
+  if (!r)
+    return;
+
+  const waist =
+    r.waist || 65;
+
+  const hip =
+    r.hip || 90;
+
+  const bust =
+    r.bust || 82;
+
+  const thigh =
+    r.thigh || 50;
+
+  const arm =
+    r.arm || 25;
+
+  /*
+   * 基準値を中心に、
+   * 入力サイズによって横幅を変化させる
+   */
+
+  const torsoWidth =
+    Math.max(
+      70,
+      Math.min(
+        115,
+        80 + (hip - 90) * 0.7
+      )
+    );
+
+  const waistWidth =
+    Math.max(
+      55,
+      Math.min(
+        95,
+        65 + (waist - 65) * 0.65
+      )
+    );
+
+  const bustWidth =
+    Math.max(
+      65,
+      Math.min(
+        110,
+        75 + (bust - 82) * 0.65
+      )
+    );
+
+  const legWidth =
+    Math.max(
+      15,
+      Math.min(
+        30,
+        20 + (thigh - 50) * 0.3
+      )
+    );
+
+  const armWidth =
+    Math.max(
+      9,
+      Math.min(
+        18,
+        12 + (arm - 25) * 0.25
+      )
+    );
+
+
+  /*
+   * 胴体を中央基準で変形
+   */
+
+  const torso =
+    document.getElementById("torso");
+
+  const left =
+    150 - torsoWidth / 2;
+
+  const right =
+    150 + torsoWidth / 2;
+
+  const bustLeft =
+    150 - bustWidth / 2;
+
+  const bustRight =
+    150 + bustWidth / 2;
+
+  const waistLeft =
+    150 - waistWidth / 2;
+
+  const waistRight =
+    150 + waistWidth / 2;
+
+
+  torso.setAttribute(
+    "d",
+    `
+    M ${bustLeft} 85
+    C ${left} 92 ${left-5} 115 ${bustLeft} 140
+    L ${waistLeft} 190
+    C ${waistLeft+4} 205 ${left+10} 210 ${left+20} 212
+    L ${left+20} 275
+    L ${right-20} 275
+    L ${right-20} 212
+    C ${right-10} 210 ${right-4} 205 ${waistRight} 190
+    L ${bustRight} 140
+    C ${right+5} 115 ${right} 92 ${bustRight} 85
+    Z
+    `
+  );
+
+
+  // 腕
+  const leftArm =
+    document.getElementById("leftArm");
+
+  const rightArm =
+    document.getElementById("rightArm");
+
+  leftArm.setAttribute(
+    "d",
+    `
+    M ${bustLeft} 105
+    C ${bustLeft-12} 110 ${bustLeft-16} 130 ${bustLeft-18} 150
+    L ${bustLeft-28} 220
+    C ${bustLeft-29} 230 ${bustLeft-22} 236 ${bustLeft-15} 231
+    L ${bustLeft-3} 160
+    L ${bustLeft+10} 125
+    Z
+    `
+  );
+
+  rightArm.setAttribute(
+    "d",
+    `
+    M ${bustRight} 105
+    C ${bustRight+12} 110 ${bustRight+16} 130 ${bustRight+18} 150
+    L ${bustRight+28} 220
+    C ${bustRight+29} 230 ${bustRight+22} 236 ${bustRight+15} 231
+    L ${bustRight+3} 160
+    L ${bustRight-10} 125
+    Z
+    `
+  );
+
+
+  // 脚
+  const leftLeg =
+    document.getElementById("leftLeg");
+
+  const rightLeg =
+    document.getElementById("rightLeg");
+
+  const centerLeft = 150 - legWidth / 2 - 3;
+  const centerRight = 150 + legWidth / 2 + 3;
+
+  leftLeg.setAttribute(
+    "d",
+    `
+    M 130 265
+    L ${centerLeft} 265
+    L ${centerLeft-2} 330
+    L ${centerLeft-7} 405
+    L ${centerLeft-29} 405
+    L ${centerLeft-21} 330
+    Z
+    `
+  );
+
+  rightLeg.setAttribute(
+    "d",
+    `
+    M ${centerRight} 265
+    L 170 265
+    L ${centerRight+2} 330
+    L ${centerRight+29} 405
+    L ${centerRight+7} 405
+    L ${centerRight} 330
+    Z
+    `
+  );
+}
+
+
+// グラフ変更
+function changeGraph(target, button) {
+
+  graphTarget = target;
+
+  document
+    .querySelectorAll(".select-row button")
+    .forEach(btn =>
+      btn.classList.remove("active")
+    );
+
+  button.classList.add("active");
+
+  drawGraph();
+}
+
+
+// グラフ
+function drawGraph() {
+
+  const canvas =
+    document.getElementById("graph");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+  canvas.width =
+    rect.width * dpr;
+
+  canvas.height =
+    280 * dpr;
+
+  ctx.scale(dpr,dpr);
+
+  const width =
+    rect.width;
+
+  const height =
+    280;
+
+  ctx.clearRect(0,0,width,height);
+
+
+  const data =
+    records
+      .filter(r =>
+        r[graphTarget] !== null &&
+        r[graphTarget] !== undefined
+      );
+
+
+  if (data.length === 0) {
+
+    ctx.fillStyle = "#aaa";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+      "まだ記録がありません",
+      width / 2,
+      height / 2
+    );
+
+    return;
+  }
+
+
+  const values =
+    data.map(r => r[graphTarget]);
+
+  let min =
+    Math.min(...values);
+
+  let max =
+    Math.max(...values);
+
+  if (min === max) {
+    min -= 1;
+    max += 1;
+  }
+
+  const padding = 42;
+
+  const graphWidth =
+    width - padding * 2;
+
+  const graphHeight =
+    height - 65;
+
+
+  // 背景グリッド
+
+  ctx.strokeStyle = "#eee";
+  ctx.lineWidth = 1;
+
+  for (let i=0; i<=4; i++) {
+
+    const y =
+      20 + graphHeight * i / 4;
+
+    ctx.beginPath();
+
+    ctx.moveTo(padding,y);
+    ctx.lineTo(width-padding,y);
+
+    ctx.stroke();
+
+    const value =
+      max - (max-min) * i/4;
+
+    ctx.fillStyle = "#aaa";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "right";
+
+    ctx.fillText(
+      value.toFixed(1),
+      padding-7,
+      y+4
+    );
+  }
+
+
+  // 線
+
+  ctx.beginPath();
+
+  data.forEach((r,i) => {
+
+    const x =
+      data.length === 1
+      ? width/2
+      : padding +
+        graphWidth *
+        i/(data.length-1);
+
+    const y =
+      20 +
+      graphHeight *
+      (max-r[graphTarget]) /
+      (max-min);
+
+    if (i === 0)
+      ctx.moveTo(x,y);
+    else
+      ctx.lineTo(x,y);
+  });
+
+  ctx.strokeStyle = "#75635c";
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  ctx.stroke();
+
+
+  // 点
+
+  data.forEach((r,i) => {
+
+    const x =
+      data.length === 1
+      ? width/2
+      : padding +
+        graphWidth *
+        i/(data.length-1);
+
+    const y =
+      20 +
+      graphHeight *
+      (max-r[graphTarget]) /
+      (max-min);
+
+    ctx.beginPath();
+
+    ctx.arc(
+      x,y,5,0,Math.PI*2
+    );
+
+    ctx.fillStyle = "#75635c";
+    ctx.fill();
+
+
+    // 日付
+    ctx.fillStyle = "#999";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+
+    const date =
+      r.date.slice(5).replace("-","/");
+
+    ctx.fillText(
+      date,
+      x,
+      height-15
+    );
+  });
+}
+
+
+// 履歴
+function renderHistory() {
+
+  const container =
+    document.getElementById("history");
+
+  if (records.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">
+        まだ記録がありません
+      </div>`;
+
+    return;
+  }
+
+
+  container.innerHTML =
+    records
+      .slice()
+      .reverse()
+      .map((r,index) => {
+
+        const values = [];
+
+        if (r.height != null)
+          values.push(`身長 ${r.height}cm`);
+
+        if (r.weight != null)
+          values.push(`体重 ${r.weight}kg`);
+
+        if (r.bust != null)
+          values.push(`バスト ${r.bust}cm`);
+
+        if (r.waist != null)
+          values.push(`ウエスト ${r.waist}cm`);
+
+        if (r.hip != null)
+          values.push(`ヒップ ${r.hip}cm`);
+
+        if (r.thigh != null)
+          values.push(`太もも ${r.thigh}cm`);
+
+        if (r.calf != null)
+          values.push(`ふくらはぎ ${r.calf}cm`);
+
+        if (r.ankle != null)
+          values.push(`足首 ${r.ankle}cm`);
+
+        if (r.arm != null)
+          values.push(`二の腕 ${r.arm}cm`);
+
+
+        return `
+          <div class="history-item">
+
+            <div class="history-date">
+              ${r.date}
+            </div>
+
+            <div class="history-values">
+              ${values.join(" ／ ")}
+            </div>
+
+            <button
+              class="delete-button"
+              onclick="deleteRecord('${r.date}')"
+            >
+              この記録を削除
+            </button>
+
+          </div>
+        `;
+
+      })
+      .join("");
+}
+
+
+// 削除
+function deleteRecord(date) {
+
+  if (
+    !confirm(
+      "この日の記録を削除しますか？"
+    )
+  ) {
+    return;
+  }
+
+  records =
+    records.filter(
+      r => r.date !== date
+    );
+
+  localStorage.setItem(
+    "bodyRecords",
+    JSON.stringify(records)
+  );
+
+  renderHistory();
+  drawGraph();
+  updateBody();
+}
+
+
+// 初期表示
+renderHistory();
+drawGraph();
+updateBody();
+
+
+// 画面サイズ変更
+window.addEventListener(
+  "resize",
+  drawGraph
+);
+
+</script>
+
+</body>
+</html>
