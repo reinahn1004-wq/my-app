@@ -333,108 +333,154 @@ canvas {
     <div class="body-area">
 
       <svg
-        class="body-svg"
-        viewBox="0 0 300 420"
-        id="bodySvg"
-      >
+  class="real-body"
+  viewBox="0 0 280 440"
+  id="bodySvg"
+  aria-label="入力したサイズを反映した人体シルエット"
+>
 
-        <!-- head -->
-        <ellipse
-          id="head"
-          class="body-fill"
-          cx="150"
-          cy="45"
-          rx="27"
-          ry="32"
-        />
+  <!-- 頭 -->
+  <ellipse
+    id="head"
+    class="skin"
+    cx="140"
+    cy="38"
+    rx="25"
+    ry="30"
+  />
 
-        <!-- neck -->
-        <path
-          id="neck"
-          class="body-fill"
-          d="M138 70 L162 70 L165 90 L135 90 Z"
-        />
+  <!-- 首 -->
+  <path
+    id="neck"
+    class="skin"
+    d="
+      M127 62
+      C128 70 128 76 125 82
+      L155 82
+      C152 76 152 70 153 62
+      Z
+    "
+  />
 
-        <!-- torso -->
-        <path
-          id="torso"
-          class="body-fill"
-          d="
-          M135 85
-          C120 88 108 100 105 125
-          L112 190
-          C118 205 125 210 130 212
-          L130 275
-          L170 275
-          L170 212
-          C175 210 182 205 188 190
-          L195 125
-          C192 100 180 88 165 85
-          Z
-          "
-        />
+  <!-- 胴体 -->
+  <path
+    id="torso"
+    class="skin"
+    d="
+      M125 80
+      C112 82 101 91 97 108
+      C94 124 98 143 103 158
+      C108 171 112 182 113 195
+      C114 207 110 220 108 232
+      C107 245 113 256 123 263
+      L123 276
+      L157 276
+      L157 263
+      C167 256 173 245 172 232
+      C170 220 166 207 167 195
+      C168 182 172 171 177 158
+      C182 143 186 124 183 108
+      C179 91 168 82 155 80
+      Z
+    "
+  />
 
-        <!-- left arm -->
-        <path
-          id="leftArm"
-          class="body-fill"
-          d="
-          M108 105
-          C95 108 90 125 87 150
-          L78 220
-          C77 230 84 236 91 231
-          L103 160
-          L116 125
-          Z
-          "
-        />
+  <!-- 左腕 -->
+  <path
+    id="leftArm"
+    class="skin"
+    d="
+      M103 101
+      C94 105 89 116 87 130
+      L77 205
+      C76 218 79 231 85 237
+      C89 240 94 237 95 231
+      L98 210
+      L108 150
+      L115 118
+      Z
+    "
+  />
 
-        <!-- right arm -->
-        <path
-          id="rightArm"
-          class="body-fill"
-          d="
-          M192 105
-          C205 108 210 125 213 150
-          L222 220
-          C223 230 216 236 209 231
-          L197 160
-          L184 125
-          Z
-          "
-        />
+  <!-- 右腕 -->
+  <path
+    id="rightArm"
+    class="skin"
+    d="
+      M177 101
+      C186 105 191 116 193 130
+      L203 205
+      C204 218 201 231 195 237
+      C191 240 186 237 185 231
+      L182 210
+      L172 150
+      L165 118
+      Z
+    "
+  />
 
-        <!-- left leg -->
-        <path
-          id="leftLeg"
-          class="body-fill"
-          d="
-          M130 265
-          L149 265
-          L147 330
-          L140 405
-          L118 405
-          L126 330
-          Z
-          "
-        />
+  <!-- 左脚 -->
+  <path
+    id="leftLeg"
+    class="skin"
+    d="
+      M123 258
+      C123 280 120 300 119 322
+      C118 343 115 369 112 398
+      L108 423
+      C108 428 112 431 118 431
+      L133 431
+      C137 431 139 428 138 423
+      L137 397
+      C138 370 140 345 140 321
+      L140 270
+      Z
+    "
+  />
 
-        <!-- right leg -->
-        <path
-          id="rightLeg"
-          class="body-fill"
-          d="
-          M151 265
-          L170 265
-          L174 330
-          L182 405
-          L160 405
-          L153 330
-          Z
-          "
-        />
+  <!-- 右脚 -->
+  <path
+    id="rightLeg"
+    class="skin"
+    d="
+      M157 258
+      C157 280 160 300 161 322
+      C162 343 165 369 168 398
+      L172 423
+      C172 428 168 431 162 431
+      L147 431
+      C143 431 141 428 142 423
+      L143 397
+      C142 370 140 345 140 321
+      L140 270
+      Z
+    "
+  />
 
-      </svg>
+  <!-- 胸・腰の自然な陰影 -->
+  <path
+    id="bodyShadow"
+    class="shadow"
+    d="
+      M104 116
+      C110 107 119 103 128 104
+      C122 119 121 137 125 151
+      C128 164 124 177 118 188
+      C113 172 108 157 105 142
+      Z
+    "
+  />
+
+  <!-- お腹の中央ライン -->
+  <path
+    class="body-detail"
+    d="
+      M140 158
+      C138 180 138 202 140 224
+    "
+  />
+
+</svg>
 
     </div>
 
@@ -613,188 +659,350 @@ function updateBody() {
 
   const r = latestRecord();
 
-  if (!r)
-    return;
-
-  const waist =
-    r.waist || 65;
-
-  const hip =
-    r.hip || 90;
-
-  const bust =
-    r.bust || 82;
-
-  const thigh =
-    r.thigh || 50;
-
-  const arm =
-    r.arm || 25;
+  if (!r) return;
 
   /*
-   * 基準値を中心に、
-   * 入力サイズによって横幅を変化させる
+   * 基準サイズ
+   */
+  const bust  = r.bust  || 82;
+  const waist = r.waist || 65;
+  const hip   = r.hip   || 90;
+  const thigh = r.thigh || 50;
+  const calf  = r.calf  || 33;
+  const ankle = r.ankle || 23;
+  const arm   = r.arm   || 25;
+
+  /*
+   * サイズを人体の幅に変換
+   *
+   * 基準値からの変化を少しずつ反映。
+   * 極端に変形しないよう上限・下限を設定。
    */
 
-  const torsoWidth =
-    Math.max(
-      70,
-      Math.min(
-        115,
-        80 + (hip - 90) * 0.7
-      )
-    );
+  const bustW =
+    Math.max(66, Math.min(108, 76 + (bust - 82) * 0.85));
 
-  const waistWidth =
-    Math.max(
-      55,
-      Math.min(
-        95,
-        65 + (waist - 65) * 0.65
-      )
-    );
+  const waistW =
+    Math.max(52, Math.min(92, 62 + (waist - 65) * 0.75));
 
-  const bustWidth =
-    Math.max(
-      65,
-      Math.min(
-        110,
-        75 + (bust - 82) * 0.65
-      )
-    );
+  const hipW =
+    Math.max(70, Math.min(116, 82 + (hip - 90) * 0.85));
 
-  const legWidth =
-    Math.max(
-      15,
-      Math.min(
-        30,
-        20 + (thigh - 50) * 0.3
-      )
-    );
+  const thighW =
+    Math.max(20, Math.min(39, 27 + (thigh - 50) * 0.45));
 
-  const armWidth =
-    Math.max(
-      9,
-      Math.min(
-        18,
-        12 + (arm - 25) * 0.25
-      )
-    );
+  const calfW =
+    Math.max(13, Math.min(28, 19 + (calf - 33) * 0.45));
+
+  const ankleW =
+    Math.max(10, Math.min(20, 14 + (ankle - 23) * 0.35));
+
+  const armW =
+    Math.max(10, Math.min(20, 13 + (arm - 25) * 0.35));
 
 
   /*
-   * 胴体を中央基準で変形
+   * 中央
+   */
+  const cx = 140;
+
+
+  /*
+   * 胴体
    */
 
-  const torso =
-    document.getElementById("torso");
+  const bustLeft = cx - bustW / 2;
+  const bustRight = cx + bustW / 2;
 
-  const left =
-    150 - torsoWidth / 2;
+  const waistLeft = cx - waistW / 2;
+  const waistRight = cx + waistW / 2;
 
-  const right =
-    150 + torsoWidth / 2;
-
-  const bustLeft =
-    150 - bustWidth / 2;
-
-  const bustRight =
-    150 + bustWidth / 2;
-
-  const waistLeft =
-    150 - waistWidth / 2;
-
-  const waistRight =
-    150 + waistWidth / 2;
+  const hipLeft = cx - hipW / 2;
+  const hipRight = cx + hipW / 2;
 
 
-  torso.setAttribute(
-    "d",
-    `
-    M ${bustLeft} 85
-    C ${left} 92 ${left-5} 115 ${bustLeft} 140
-    L ${waistLeft} 190
-    C ${waistLeft+4} 205 ${left+10} 210 ${left+20} 212
-    L ${left+20} 275
-    L ${right-20} 275
-    L ${right-20} 212
-    C ${right-10} 210 ${right-4} 205 ${waistRight} 190
-    L ${bustRight} 140
-    C ${right+5} 115 ${right} 92 ${bustRight} 85
-    Z
-    `
-  );
+  document
+    .getElementById("torso")
+    .setAttribute(
+      "d",
+      `
+      M ${bustLeft} 80
+
+      C ${bustLeft-5} 90
+        ${bustLeft-7} 105
+        ${bustLeft-4} 122
+
+      C ${bustLeft-2} 137
+        ${waistLeft+2} 151
+        ${waistLeft} 168
+
+      C ${waistLeft-1} 184
+        ${waistLeft+2} 198
+        ${waistLeft-3} 211
+
+      C ${waistLeft-5} 225
+        ${hipLeft+2} 242
+        ${hipLeft+7} 254
+
+      C ${hipLeft+11} 264
+        ${hipLeft+15} 270
+        ${hipLeft+20} 276
+
+      L ${cx-17} 276
+
+      L ${cx+17} 276
+
+      C ${hipRight-15} 270
+        ${hipRight-11} 264
+        ${hipRight-7} 254
+
+      C ${hipRight-2} 242
+        ${waistRight+5} 225
+        ${waistRight+3} 211
+
+      C ${waistRight-2} 198
+        ${waistRight+1} 184
+        ${waistRight} 168
+
+      C ${waistRight-2} 151
+        ${bustRight+2} 137
+        ${bustRight+4} 122
+
+      C ${bustRight+7} 105
+        ${bustRight+5} 90
+        ${bustRight} 80
+
+      Z
+      `
+    );
 
 
-  // 腕
-  const leftArm =
-    document.getElementById("leftArm");
+  /*
+   * 腕
+   */
 
-  const rightArm =
-    document.getElementById("rightArm");
+  const armGap = 8;
+  const armTop = bustW / 2 + armGap;
 
-  leftArm.setAttribute(
-    "d",
-    `
-    M ${bustLeft} 105
-    C ${bustLeft-12} 110 ${bustLeft-16} 130 ${bustLeft-18} 150
-    L ${bustLeft-28} 220
-    C ${bustLeft-29} 230 ${bustLeft-22} 236 ${bustLeft-15} 231
-    L ${bustLeft-3} 160
-    L ${bustLeft+10} 125
-    Z
-    `
-  );
+  const leftArmOuter = cx - armTop - armW;
 
-  rightArm.setAttribute(
-    "d",
-    `
-    M ${bustRight} 105
-    C ${bustRight+12} 110 ${bustRight+16} 130 ${bustRight+18} 150
-    L ${bustRight+28} 220
-    C ${bustRight+29} 230 ${bustRight+22} 236 ${bustRight+15} 231
-    L ${bustRight+3} 160
-    L ${bustRight-10} 125
-    Z
-    `
-  );
+  const rightArmOuter = cx + armTop + armW;
 
 
-  // 脚
-  const leftLeg =
-    document.getElementById("leftLeg");
+  document
+    .getElementById("leftArm")
+    .setAttribute(
+      "d",
+      `
+      M ${bustLeft} 99
 
-  const rightLeg =
-    document.getElementById("rightLeg");
+      C ${bustLeft-10} 103
+        ${bustLeft-15} 116
+        ${bustLeft-17} 132
 
-  const centerLeft = 150 - legWidth / 2 - 3;
-  const centerRight = 150 + legWidth / 2 + 3;
+      L ${leftArmOuter} 202
 
-  leftLeg.setAttribute(
-    "d",
-    `
-    M 130 265
-    L ${centerLeft} 265
-    L ${centerLeft-2} 330
-    L ${centerLeft-7} 405
-    L ${centerLeft-29} 405
-    L ${centerLeft-21} 330
-    Z
-    `
-  );
+      C ${leftArmOuter-2} 215
+        ${leftArmOuter+1} 228
+        ${leftArmOuter+7} 235
 
-  rightLeg.setAttribute(
-    "d",
-    `
-    M ${centerRight} 265
-    L 170 265
-    L ${centerRight+2} 330
-    L ${centerRight+29} 405
-    L ${centerRight+7} 405
-    L ${centerRight} 330
-    Z
-    `
-  );
+      C ${leftArmOuter+11} 239
+        ${leftArmOuter+16} 236
+        ${leftArmOuter+17} 230
+
+      L ${leftArmOuter+22} 207
+
+      L ${bustLeft+armW+2} 151
+
+      L ${bustLeft+armW+7} 119
+
+      Z
+      `
+    );
+
+
+  document
+    .getElementById("rightArm")
+    .setAttribute(
+      "d",
+      `
+      M ${bustRight} 99
+
+      C ${bustRight+10} 103
+        ${bustRight+15} 116
+        ${bustRight+17} 132
+
+      L ${rightArmOuter} 202
+
+      C ${rightArmOuter+2} 215
+        ${rightArmOuter-1} 228
+        ${rightArmOuter-7} 235
+
+      C ${rightArmOuter-11} 239
+        ${rightArmOuter-16} 236
+        ${rightArmOuter-17} 230
+
+      L ${rightArmOuter-22} 207
+
+      L ${bustRight-armW-2} 151
+
+      L ${bustRight-armW-7} 119
+
+      Z
+      `
+    );
+
+
+  /*
+   * 太もも〜脚
+   */
+
+  const thighLeftOuter =
+    cx - thighW - 3;
+
+  const thighRightOuter =
+    cx + thighW + 3;
+
+
+  const calfLeftOuter =
+    cx - calfW / 2 - 3;
+
+  const calfRightOuter =
+    cx + calfW / 2 + 3;
+
+
+  const ankleLeftOuter =
+    cx - ankleW / 2 - 3;
+
+  const ankleRightOuter =
+    cx + ankleW / 2 + 3;
+
+
+  /*
+   * 左脚
+   */
+
+  document
+    .getElementById("leftLeg")
+    .setAttribute(
+      "d",
+      `
+      M ${cx-17} 260
+
+      C ${thighLeftOuter+8} 270
+        ${thighLeftOuter} 300
+        ${thighLeftOuter+2} 325
+
+      C ${thighLeftOuter+4} 340
+        ${calfLeftOuter+7} 348
+        ${calfLeftOuter+5} 365
+
+      C ${calfLeftOuter+3} 380
+        ${ankleLeftOuter+4} 395
+        ${ankleLeftOuter+2} 414
+
+      L ${ankleLeftOuter} 429
+
+      L ${ankleLeftOuter+ankleW} 429
+
+      L ${ankleLeftOuter+ankleW+3} 412
+
+      C ${ankleLeftOuter+ankleW+4} 394
+        ${calfLeftOuter+calfW+4} 378
+        ${calfLeftOuter+calfW+3} 360
+
+      C ${calfLeftOuter+calfW+2} 343
+        ${thighLeftOuter+thighW+4} 326
+        ${thighLeftOuter+thighW+3} 310
+
+      L ${cx-1} 260
+
+      Z
+      `
+    );
+
+
+  /*
+   * 右脚
+   */
+
+  document
+    .getElementById("rightLeg")
+    .setAttribute(
+      "d",
+      `
+      M ${cx+17} 260
+
+      C ${thighRightOuter-8} 270
+        ${thighRightOuter} 300
+        ${thighRightOuter-2} 325
+
+      C ${thighRightOuter-4} 340
+        ${calfRightOuter-7} 348
+        ${calfRightOuter-5} 365
+
+      C ${calfRightOuter-3} 380
+        ${ankleRightOuter-4} 395
+        ${ankleRightOuter-2} 414
+
+      L ${ankleRightOuter} 429
+
+      L ${ankleRightOuter-ankleW} 429
+
+      L ${ankleRightOuter-ankleW-3} 412
+
+      C ${ankleRightOuter-ankleW-4} 394
+        ${calfRightOuter-calfW-4} 378
+        ${calfRightOuter-calfW-3} 360
+
+      C ${calfRightOuter-calfW-2} 343
+        ${thighRightOuter-thighW-4} 326
+        ${thighRightOuter-thighW-3} 310
+
+      L ${cx+1} 260
+
+      Z
+      `
+    );
+
+
+  /*
+   * 胴体の陰影も体型に合わせる
+   */
+
+  document
+    .getElementById("bodyShadow")
+    .setAttribute(
+      "d",
+      `
+      M ${bustLeft+5} 112
+      C ${bustLeft+10} 101
+        ${cx-5} 98
+        ${cx-2} 108
+
+      C ${cx-7} 127
+        ${cx-8} 146
+        ${waistLeft+5} 165
+
+      C ${waistLeft+4} 180
+        ${waistLeft+7} 195
+        ${hipLeft+8} 211
+
+      C ${hipLeft+12} 225
+        ${hipLeft+17} 241
+        ${hipLeft+20} 250
+
+      C ${cx-20} 238
+        ${cx-22} 219
+        ${cx-18} 201
+
+      C ${cx-14} 180
+        ${cx-17} 151
+        ${cx-10} 130
+
+      Z
+      `
+    );
 }
 
 
